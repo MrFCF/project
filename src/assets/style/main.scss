@@ -1,0 +1,21 @@
+@function px2rem($px){
+	@return $px*0.625 / 10 + rem;
+}
+// 设置设计图的宽度
+$designWidth : 1920;
+
+
+$act-color: #5473E8;
+$text-color-imp: #000;
+$text-color: #757575;
+$src-bg: #fafafa;
+
+// 设置字体大小
+$text-size-imp: px2rem(48);
+$text-size-mid: px2rem(28);
+$text-size:px2rem(24);
+$text-size-small: px2rem(22);
+
+// 高度公共的变量
+
+$th: px2rem(80); // 顶部的高度
