@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+// import { message } from element-ui
 import home from './views/Home.vue'
 import main_warp from './views/Main_warp.vue'
 // 登录
@@ -32,7 +33,9 @@ import userIndex from './views/User/index.vue'
 
 Vue.use(Router)
 
-export default new Router({
+
+
+var router = new Router({
   mode: 'hash',
   routes: [
     {
@@ -131,3 +134,19 @@ export default new Router({
     },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if(to.path != '/'){
+    let isTrue = sessionStorage.getItem('LoginUser') ? true : false;
+    if(isTrue){
+      next();
+    }else{
+      next('/');
+      // this.$message.info('检测到您未登录,请重新登录!');
+    }
+  }else{
+    next();
+  }
+})
+
+export default router

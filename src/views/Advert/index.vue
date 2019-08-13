@@ -18,7 +18,7 @@
                                 @dragover.prevent="handleDragover($event, item)"
                                 @drop="handleDrop($event, item, 'swiper')"
                                 @dragend="handleDragEnd($event, item)">
-                                <div class="img_bg" @click="deleteItem('swiper',item.id)" :dataId="item.id">
+                                <div class="img_bg" @click="deleteItem('swiper',index,item.id)" :dataId="item.id">
                                     <img src="@/assets/images/banner/delete.png" alt="">
                                 </div>
                             </li>
@@ -232,7 +232,7 @@ export default {
             width: px2rem(1620);
             height: px2rem(900);
             overflow-y: auto;
-            overflow-x: hidden;
+            // overflow-x: hidden;
             padding: px2rem(30) px2rem(40) 0 px2rem(40);
             float: left;
             .box-warp{
@@ -240,6 +240,7 @@ export default {
                 background: #ffffff;
                 width: 100%;
                 padding: px2rem(30) 0 px2rem(30) px2rem(30);
+                margin-bottom: px2rem(100);
                 .banner_warp{
                     width: px2rem(640);
                     .title{

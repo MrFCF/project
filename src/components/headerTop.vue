@@ -5,16 +5,16 @@
                 <img src="../assets/images/LOGO.png" alt="">
             </div>
             <el-menu-item index="/home" title="1">首页</el-menu-item>
-            <el-menu-item index="/articleIndex">文章</el-menu-item>
-            <el-menu-item index="/videoIndex">视频</el-menu-item>
-            <el-menu-item index="/noticeIndex">公告</el-menu-item>
-            <el-menu-item index="/advertIndex">广告</el-menu-item>
-            <el-menu-item index="/healthIndex">公共卫生</el-menu-item>
-            <el-menu-item index="/userIndex">用户</el-menu-item>
+            <el-menu-item index="/articleIndex" v-if="power.article">文章</el-menu-item>
+            <el-menu-item index="/videoIndex" v-if="power.video">视频</el-menu-item>
+            <el-menu-item index="/noticeIndex" v-if="power.notice">公告</el-menu-item>
+            <el-menu-item index="/advertIndex" v-if="power.advert">广告</el-menu-item>
+            <el-menu-item index="/healthIndex" v-if="power.health">公共卫生</el-menu-item>
+            <el-menu-item index="/userIndex" v-if="power.user">用户</el-menu-item>
             <div class="login_info_warp">
                 <span>欢迎您，卫计委管理员~</span>
                 <div :class="['login_info_main', isAccount ? 'account' : '']" @mousemove="account" @mouseout="noAccount">
-                    <span v-show="isAccount" class="outLogin">退出登录</span>
+                    <span v-show="isAccount" class="outLogin" @click="logout">退出登录</span>
                     <span v-show="isAccount" class="modifyPw">修改密码</span>
                     <div class="userInfo">
                         <img src="../assets/icon/user.png" alt="">
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { powerAndDistrict,logoutPost } from '../service/index'
 import bus from '../assets/eventBus'
 export default {
     name:'header_top',
@@ -34,6 +35,14 @@ export default {
         return {
             activeIndex: '/home',
             isAccount: false,
+            power:{
+                article: false,
+                video: false,
+                notice: false,
+                advert: false,
+                health: false,
+                user: false
+            }
         }
     },
     methods:{
@@ -47,13 +56,55 @@ export default {
         },
         noAccount(){
             this.isAccount = false;
+        },
+        logout(){
+            logoutPost().then(res => {
+                console.log(res)
+                if(res.data.code == 200){
+                    this.$message.success(res.data.message)
+                    this.$router.push('/')
+                    sessionStorage.removeItem("LoginUser");
+                }
+            })
         }
     },
     beforeMount(){
         // this.activeIndex = sessionStorage.getItem('headerTopDefault');
         let routeUrl ='/' + this.$route.path.split('/')[1];
         this.activeIndex = routeUrl 
-        console.log(routeUrl)
+        // console.log(routeUrl)
+        powerAndDistrict().then( res => {
+            if(res.data.code == 200){
+                var data = res.data.data.powers;
+                // this.$store.state.powers = data;
+                // this.$store.mutations
+                this.$store.commit('initPower',data);
+                bus.$emit('power',data);
+                for(var i = 0;i< data.length;i++){
+                    switch(data[i].id)
+                        {
+                            case 1:
+                                this.power.article = true;
+                                break;
+                            case 2:
+                                this.power.video = true;
+                                break;
+                            case 3:
+                                this.power.notice = true;
+                                break;
+                            case 4:
+                                this.power.advert = true;
+                                break;
+                            case 5:
+                                this.power.health = true;
+                                break;
+                            case 6:
+                                this.power.user = true;
+                                break;
+                        }
+                }
+            }
+        })  
     }
 }
 </script>

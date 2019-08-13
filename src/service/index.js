@@ -1,9 +1,13 @@
-import axios from 'axios'
-import { Loading,Message } from 'element-ui';
-axios.defaults.baseURL = '/api/'
-axios.defaults.timeout = 5000
-axios.defaults.headers.post['content-Type'] = 'application/json;charset=UTF-8'
 
+
+import axios from 'axios'
+import { getCookie } from './util/util'
+import { Loading,Message } from 'element-ui';
+axios.defaults.baseURL = 'http://192.168.0.129:10040/'
+axios.defaults.timeout = 10000
+axios.defaults.headers.post['content-Type'] = 'application/json;charset=UTF-8'
+// var Ip = '/api/'
+var Ip = 'http://192.168.0.129:10040/'
 
 
 /**
@@ -29,12 +33,20 @@ axios.defaults.headers.post['content-Type'] = 'application/json;charset=UTF-8'
 //  登录完成后的所有请求必须添加用户token 
 export function loginPost(data){
     return axios({
-		url:`/sys/login`,
+		url:`sys/login`,
 		method:'post',
 		params:data
 	})
 }
 
+//  退出登录
+export function logoutPost(data){
+    return axios({
+		url:`sys/logout`,
+		method:'post',
+		params:data
+	})
+}
 
 
 /**
@@ -57,7 +69,7 @@ export function logout(data){
  */
 export function messageFindAll(data){
     return axios({
-		url:`/findAll`,
+		url:`findAll`,
 		method:'post',
 		params:data
 	})
@@ -72,7 +84,7 @@ export function messageFindAll(data){
  */
 export function messageFindById(data){
     return axios({
-		url:`/findByIdMessage`,
+		url:`findByIdMessage`,
 		method:'post',
 		params:data
 	})
@@ -86,7 +98,7 @@ export function messageFindById(data){
  */
 export function updateMessage(data){
     return axios({
-		url:`/updateMessage`,
+		url:`updateMessage`,
 		method:'post',
 		params:data
 	})
@@ -100,7 +112,7 @@ export function updateMessage(data){
  */
 export function delMessage(data){
     return axios({
-		url:`/delMessage`,
+		url:`delMessage`,
 		method:'post',
 		params:data
 	})
@@ -114,7 +126,7 @@ export function delMessage(data){
  */
 export function addMessage(data){
     return axios({
-		url:`/addMessage`,
+		url:`addMessage`,
 		method:'post',
 		params:data
 	})
@@ -364,7 +376,7 @@ export function addArticle(data){
 	})
 }
 export function addArticleUrl(){
-	return `/api/article/insertArticlePhoto`;
+	return  Ip + `article/insertArticlePhoto`;
 }
 
 /**
@@ -494,11 +506,11 @@ export function findPhoto(data){
 // 广告管理
 // 添加轮播图片
 export function insertAdvertisementPhoto(data){
-		return `/api/AdvertisementPhoto/insertAdvertisementPhoto`
+		return  Ip + `AdvertisementPhoto/insertAdvertisementPhoto`
 }
 // 添加banner图片
 export function AdvertisementPhoto(data){
-	return `/api/AdvertisementPhoto/AdvertisementPhoto`
+	return  Ip + `AdvertisementPhoto/AdvertisementPhoto`
 }
 
 // 删除图片
@@ -559,11 +571,11 @@ export function selectVideoByRequired(data){
 
 //  第一次上传
 export function releaseVideo(){
-	return `/api/videoRelease/releaseVideo`;
+	return  Ip + `videoRelease/releaseVideo`;
 }
 // 第二次上传
 export function videoUpload(){
-	return `/api/videoRelease/videoUpload`;
+	return  Ip + `videoRelease/videoUpload`;
 }
 
 
@@ -719,7 +731,7 @@ export function delUser(data){
 // 根据用户等级查询所拥有的权限和地区
 export function powerAndDistrict(data){
 	return axios({
-		url: `userManagement/powerAndDistrict`,
+		url: `userManagement/powers`,
 		method: 'post',
 		params: data
 	})
@@ -735,6 +747,12 @@ let axiosIns = axios.interceptors.request.use(
 			spinner: 'el-icon-loading',
 			background: 'rgba(0, 0, 0, 0.7)'
 		})
+		// const token = getCookie('JSESSIONID');
+		// config.data = JSON.stringify(config.data);
+		// if (token) {
+		// 	config.params = {'token': token} //后台接收的参数，后面我们将说明后台如何接收
+		// }
+		// config.params.credentials = "include";
 		let LoginToken = sessionStorage.getItem("LoginToken");
 		if(LoginToken){
             // 添加token

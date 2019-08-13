@@ -110,7 +110,6 @@ export default {
                 if(res.data.code == 200){
                     this.tableData = res.data.data;
                     this.total = res.data.count;
-                    this.$message.success(res.data.message);
                 }
             })
         },
@@ -178,6 +177,9 @@ export default {
 </script>
 <style lang='scss'>
     .publishArticle{
+        .box-warp{
+            margin-bottom: 100px;
+        }
         .el-dropdown{
             color: #414142;
             border-radius: px2rem(4);

@@ -92,13 +92,11 @@ export default {
                 if (valid) {
                     this.parameter.fun(this.publishForm).then(res => {
                         if(res.data.code == 200) {
-                            this.$message.success(res.data.data)
+                            this.$message.success(res.data.message)
                             this.$parent.FindAll();
                         }else{
-                            this.$message.error(res.data.data)
+                            this.$message.error(res.data.message)
                         }
-                    }).catch(err => {
-                        this.$message.error('添加失败')
                     })
                     this.publishDialogVisible = false //关闭弹框
                 } else {

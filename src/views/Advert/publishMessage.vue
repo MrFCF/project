@@ -89,6 +89,11 @@ export default {
             return true;
         },
         handleOpen(){
+            this.publishForm = {
+                title: '',
+                continuous: '',
+                imageUrl: ''
+            },
             this.action = this.parameter.fun;
         },
         addSucess(res){
@@ -126,6 +131,9 @@ export default {
   }
 </style>
 <style lang='scss'>
+    .el-dialog__wrapper{
+        z-index: 1000 !important;   //Advert
+    }
     .publish{
         .publish_warp{
             .el-input__inner{

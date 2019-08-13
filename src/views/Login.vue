@@ -15,22 +15,22 @@
                             <el-input v-model="loginForm.username" placeholder="请输入账号" class="account"></el-input>
                         </el-form-item>
                         <el-form-item prop="password">
-                            <el-input v-model="loginForm.password" placeholder="请输入密码" class="passWd"></el-input>
+                            <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" class="passWd"></el-input>
                         </el-form-item>
-                        <el-form-item>
-                            <el-input v-model="VCode" placeholder="请输入验证码" class="VCode"></el-input>
+                        <el-form-item prop="VCode">
+                            <el-input v-model="loginForm.VCode" placeholder="请输入验证码" class="VCode"></el-input>
                             <div class="VCode_num">
                                 <p>{{code}}</p>
                                 <span @click="refresh">刷新</span>
                             </div>
                         </el-form-item>
-                        <el-form-item prop="type">
-                            <el-checkbox-group v-model="type">
-                                <el-checkbox label="记住密码" name="type" style="color:#414142"></el-checkbox>.
+                        <el-form-item>
+                            <el-checkbox-group v-model="rememberPassWd">
+                                <el-checkbox label="记住密码" name="type" style="color:#414142"></el-checkbox>
                             </el-checkbox-group>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="submitForm('loginForm')">提交</el-button>
+                            <el-button type="primary" @click="submitForm('loginForm')">登录</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
@@ -46,11 +46,11 @@ export default {
     data() {
         return {
             loginForm:{
-                username:'admin',
-                password: '123456',
+                username:'',
+                password: '',
+                VCode: '',
             },
-            type: '',
-            VCode: '',
+            rememberPassWd: false,
             code: '',
             // VCode: '',
             loginRules: {
@@ -59,23 +59,26 @@ export default {
                 ],
                 password:[
                     { required: true, message: '请输入密码', trigger: 'blur' }
+                ],
+                VCode:[
+                    { required: true, message: '验证码不能为空', trigger: 'blur' }
                 ]
             }
         }
     },
-    mounted(){
+    beforeMount(){
         this.createCode();
         if(localStorage.getItem('loginForm')){
             let loginObj = JSON.parse(localStorage.getItem('loginForm'));
             this.loginForm.username = loginObj.username;
             this.loginForm.password = loginObj.password;
-            this.type = loginObj.type;
+            this.rememberPassWd = loginObj.rememberPassWd ? loginObj.rememberPassWd : false;
         }
     },
     methods:{
         refresh(){
             this.createCode();
-            this.VCode = '';
+            this.loginForm.VCode = '';
             // 刷新验证码;
         },
         createCode(){
@@ -89,6 +92,8 @@ export default {
         },
         // 记住密码
         remember(){
+            // console.log('1111111111111')
+            this.loginForm.rememberPassWd = this.rememberPassWd
             localStorage.setItem('loginForm',JSON.stringify(this.loginForm))
         },
         // 登录
@@ -96,11 +101,11 @@ export default {
             let vm = this;
             this.$refs[loginForm].validate((valid) => {
                 if (valid) {
-                    let inputCode = this.VCode.toUpperCase()
+                    let inputCode = this.loginForm.VCode.toUpperCase()
                     if(inputCode != this.code){
                         this.$message.error('验证码错误'); // 弹出验证码输入错误
                         this.createCode();
-                        this.VCode = '';
+                        this.loginForm.VCode = '';
                         return;
                     }else if(this.code == ""){
                         this.$message.error('验证码不能为空'); // 弹出验证码不能为空
@@ -108,14 +113,21 @@ export default {
                         return;
                     }else{
                         // 登录接口 
+                        this.loginForm.credentials = "include";
+                        delete this.loginForm.VCode;
                         loginPost(this.loginForm).then(res => {
-                            sessionStorage.setItem('LoginUser',JSON.stringify(res))
-                            if(vm.type){
-                                vm.remember();
-                            }
                             if( res.data.code == 200){
-                                this.$message.success('登录成功')
+                                sessionStorage.setItem('LoginUser',JSON.stringify(res));
+                                sessionStorage.setItem('level',res.data.data.level);
+                                this.$message.success(res.data.message)
                                 this.$router.push('/home')
+                                if(vm.rememberPassWd){
+                                    vm.remember();
+                                }
+                            }else{
+                                this.$message.error(res.data.message);
+                                this.loginForm.password = "";
+                                vm.refresh();
                             }
                         }).catch( err => {
                             this.$message.error(err)
@@ -123,7 +135,6 @@ export default {
 
                     }
                 } else {
-                    this.$message.error('登陆失败');
                     return false;
                 }
             });

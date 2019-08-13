@@ -9,7 +9,7 @@
                 <el-col :span="24">
                     <div class="grid-content">
                         <el-table :data="tableData" border style="width: 100%">
-                            <el-table-column prop="disId" label="序号" width="80" align="center">
+                            <el-table-column prop="id" label="序号" width="80" align="center">
                             </el-table-column>
                             <el-table-column prop="uname" label="用户昵称" width="160" align="center" :show-overflow-tooltip=true>
                             </el-table-column>
@@ -77,18 +77,22 @@ export default {
                 if(res.data.code == 200) {
                     this.tableData = res.data.data;
                     this.total = res.data.count;
-                    this.$message.success(res.data.message)
                 }
             })
         },
         handleEdit(index, row) {
-            this.$refs.publish.publishDialogVisible = true;
-            this.parameter = {
-                title:'编辑',
-                data: row,
-                jumParameter : this.$route.query.jumParameter,
-                fun:modifyUser
-            }
+            
+            userFindById({id:row.id}).then(res => {
+                // if(res.data.code == 200){
+                    this.parameter = {
+                        title:'编辑',
+                        data: res.data.data,
+                        jumParameter : this.$route.query.jumParameter,
+                        fun:modifyUser
+                    }
+                    this.$refs.publish.publishDialogVisible = true;
+                // }
+            })
         },
         handleDelete(index, row) {
             this.$confirm('删除后将不能恢复，确定要删除系统中的这条记录吗?', '删除', {
@@ -100,11 +104,11 @@ export default {
             cancelButtonClass: 'closeMessage',
             confirmButtonClass: 'DetermineMessage',
             }).then(() => {
-                delUser({id:row.disId}).then(res => {
+                delUser({id:row.id}).then(res => {
                     if(res.data.code == 200){
-                        this.$message.success(res.data.message)
+                        this.$message.success(res.data.message);
                     }else{
-                        this.$message.error('删除失败')
+                        this.$message.error('删除失败');
                     }
                 })
             this.tableData.splice(index,1);

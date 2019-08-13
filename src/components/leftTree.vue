@@ -6,14 +6,18 @@
         @select="handleSelect"
         background-color="#1F2D54"
         :default-openeds=openeds>
-            <el-submenu v-for="(item,index) in msg" :key="index" :index="item.title">
+            <el-menu-item  v-for="(item,index) in msg" :key="index" :title="item.chilrenTitle" :index="item.indexUrl">
+                <i class="el-icon-location"></i>
+                <span slot="title">{{item.text}}</span>
+            </el-menu-item>
+            <!-- <el-submenu >
                 <template slot="title">
-                    <span>{{item.title}}</span>
-                </template>
-                <el-menu-item v-for="(itemClient ,index) in item.Client" :key="index" :title="itemClient.chilrenTitle" :index="itemClient.indexUrl">
+                    <span >{{item.chilrenTitle}}</span>
+                </template> -->
+                <!-- <el-menu-item v-for="(itemClient ,index) in item.Client" :key="index" :title="itemClient.chilrenTitle" :index="itemClient.indexUrl">
                     <i class="el-icon-location"></i>
-                    {{itemClient.text}}
-                </el-menu-item>
+                    
+                </el-menu-item> -->
                 <!-- <el-menu-item title="文章审核" index="examineArticle:111">
                     <i class="el-icon-location"></i>
                     文章审核
@@ -39,7 +43,7 @@
                     <i class="el-icon-location"></i>
                     文章管理
                 </el-menu-item> -->
-            </el-submenu>
+            <!-- </el-submenu> -->
         </el-menu>
     </div>
 </template>
@@ -47,87 +51,28 @@
 <script>
 var treeDataList = {
     articleIndex: [
-        {
-            title:'居民端',
-            Client: [
-                {chilrenTitle: '发布文章', indexUrl: 'publishArticle:111', iconUrl: '',text: '发布文章'},
-                {chilrenTitle: '文章审核', indexUrl: 'examineArticle:111', iconUrl: '',text: '文章审核'},
-                {chilrenTitle: '分类管理', indexUrl: 'classificationArticle:111', iconUrl: '',text: '分类管理'}
-            ]
-        },
-        {
-            title:'医生端',
-            Client: [
-                {chilrenTitle: '发布文章', indexUrl: 'publishArticle:222', iconUrl: '',text: '发布文章'},
-                {chilrenTitle: '文章审核', indexUrl: 'examineArticle:222', iconUrl: '',text: '文章审核'},
-                {chilrenTitle: '分类管理', indexUrl: 'classificationArticle:222', iconUrl: '',text: '分类管理'}
-            ]
-        }
+        {id:7,chilrenTitle: '发布文章', indexUrl: 'publishArticle', iconUrl: '',text: '发布文章'},
+        {id:8,chilrenTitle: '文章审核', indexUrl: 'examineArticle', iconUrl: '',text: '文章审核'},
+        {id:9,chilrenTitle: '分类管理', indexUrl: 'classificationArticle', iconUrl: '',text: '分类管理'}
     ],
     videoIndex: [
-        {
-            title:'居民端',
-            Client: [
-                {chilrenTitle: '发布视频', indexUrl: 'publishVideo:111', iconUrl: '',text: '发布视频'},
-                {chilrenTitle: '视频审核', indexUrl: 'examineVideo:111', iconUrl: '',text: '视频审核'},
-                {chilrenTitle: '分类管理', indexUrl: 'classificationVideo:111', iconUrl: '',text: '分类管理'}
-            ]
-        },
-        {
-            title:'医生端',
-            Client: [
-                {chilrenTitle: '发布视频', indexUrl: 'publishVideo:222', iconUrl: '',text: '发布视频'},
-                {chilrenTitle: '视频审核', indexUrl: 'examineVideo:222', iconUrl: '',text: '视频审核'},
-                {chilrenTitle: '分类管理', indexUrl: 'classificationVideo:222', iconUrl: '',text: '分类管理'}
-            ]
-        }
+        {id:10,chilrenTitle: '发布视频', indexUrl: 'publishVideo', iconUrl: '',text: '发布视频'},
+        {id:11,chilrenTitle: '视频审核', indexUrl: 'examineVideo', iconUrl: '',text: '视频审核'},
+        {id:12,chilrenTitle: '分类管理', indexUrl: 'classificationVideo', iconUrl: '',text: '分类管理'}
     ],
     noticeIndex: [
-        {
-            title:'居民端',
-            Client: [
-                {chilrenTitle: '发布公告', indexUrl: 'publishNotice:111', iconUrl: '',text: '发布公告'},
-                {chilrenTitle: '公告审核', indexUrl: 'examineNotice:111', iconUrl: '',text: '公告审核'}
-            ]
-        },
-        {
-            title:'医生端',
-            Client: [
-                {chilrenTitle: '发布公告', indexUrl: 'publishNotice:222', iconUrl: '',text: '发布公告'},
-                {chilrenTitle: '公告审核', indexUrl: 'examineNotice:222', iconUrl: '',text: '公告审核'}
-            ]
-        }
+        {id:13,chilrenTitle: '发布公告', indexUrl: 'publishNotice', iconUrl: '',text: '发布公告'},
+        {id:14,chilrenTitle: '公告审核', indexUrl: 'examineNotice', iconUrl: '',text: '公告审核'}
     ],
     advertIndex: [
-        {
-            title:'居民端',
-            Client: [
-                {chilrenTitle: '广告图片', indexUrl: 'advertIndex:111', iconUrl: '',text: '广告图片'},
-            ]
-        },
-        {
-            title:'医生端',
-            Client: [
-                {chilrenTitle: '广告图片', indexUrl: 'advertIndex:222', iconUrl: '',text: '广告图片'}
-            ]
-        }
+        {id:16  ,chilrenTitle: '广告图片', indexUrl: 'advertIndex', iconUrl: '',text: '广告图片'},
     ],
     healthIndex: [
-        {
-            title:'家庭医生',
-            Client: [
-                {chilrenTitle: '服务包', indexUrl: 'servicePack', iconUrl: '',text: '服务包'},
-                {chilrenTitle: '服务协议', indexUrl: 'serviceArg', iconUrl: '',text: '服务协议'},
-            ]
-        }
+        {id:17,chilrenTitle: '服务包', indexUrl: 'servicePack', iconUrl: '',text: '服务包'},
+        {id:18,chilrenTitle: '服务协议', indexUrl: 'serviceArg', iconUrl: '',text: '服务协议'},
     ],
     userIndex: [
-        {
-            title:'用户管理',
-            Client: [
-                {chilrenTitle: '用户管理', indexUrl: 'userIndex', iconUrl: '',text: '用户管理'},
-            ]
-        }
+        {id:19,chilrenTitle: '用户管理', indexUrl: 'userIndex', iconUrl: '',text: '用户管理'},
     ]
 }
 
@@ -152,8 +97,94 @@ export default {
         }
     },
     beforeMount(){
-        bus.$on('user',(msg) => {
+        bus.$on('power',(power) => {
             // this.msg = msg
+            var isTrue;
+            for(var i = 0;i< power.length;i++){
+                    switch(power[i].id)
+                        {
+                            case 1:
+                                for(var j = 0;j<treeDataList.articleIndex.length;j++){
+                                    isTrue = false;
+                                    for(var z = 0;z<power[i].children.length;z++){
+                                        if(treeDataList.articleIndex[j].id == power[i].children[z].id){
+                                            isTrue = true;
+                                            break;
+                                        }
+                                    }
+                                    
+                                    if(!isTrue){
+                                        treeDataList.articleIndex.splice(j,1)
+                                    }
+                                }
+                                break;
+                            case 2:
+                                for(var j = 0;j<treeDataList.videoIndex.length;j++){
+                                    for(var z = 0;z<power[i].children.length;z++){
+                                        if(treeDataList.videoIndex[j].id == power[i].children[z].id){
+                                            isTrue = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!isTrue){
+                                        treeDataList.articleIndex.splice(j,1)
+                                    }
+                                }
+                                break;
+                            case 3:
+                                for(var j = 0;j<treeDataList.noticeIndex.length;j++){
+                                    for(var z = 0;z<power[i].children.length;z++){
+                                        if(treeDataList.noticeIndex[j].id == power[i].children[z].id){
+                                            isTrue = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!isTrue){
+                                        treeDataList.articleIndex.splice(j,1)
+                                    }
+                                }
+                                break;
+                            case 4:
+                                for(var j = 0;j<treeDataList.advertIndex.length;j++){
+                                    for(var z = 0;z<power[i].children.length;z++){
+                                        if(treeDataList.advertIndex[j].id == power[i].children[z].id){
+                                            isTrue = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!isTrue){
+                                        treeDataList.articleIndex.splice(j,1)                                        
+                                    }
+                                }
+                                break;
+                            case 5:
+                                for(var j = 0;j<treeDataList.healthIndex.length;j++){
+                                    for(var z = 0;z<power[i].children.length;z++){
+                                        if(treeDataList.healthIndex[j].id == power[i].children[z].id){
+                                            isTrue = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!isTrue){
+                                        treeDataList.articleIndex.splice(j,1)    
+                                    }
+                                }
+                                break;
+                            case 6:
+                                for(var j = 0;j<treeDataList.userIndex.length;j++){
+                                    for(var z = 0;z<power[i].children.length;z++){
+                                        if(treeDataList.userIndex[j].id == power[i].children[z].id){
+                                            isTrue = true;
+                                            break;
+                                        }
+                                    }
+                                    if(!isTrue){
+                                        treeDataList.articleIndex.splice(j,1)    
+                                    }
+                                }
+                                break;
+                        }
+                }
         })
         let routeUrl = this.$route.path.split('/')[1];  //获取路由信息;
         this.msg = treeDataList[routeUrl];  //改变当前树的结构

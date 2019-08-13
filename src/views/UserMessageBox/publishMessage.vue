@@ -5,6 +5,7 @@
             :visible.sync="publishDialogVisible"
             :close-on-click-modal="false"
             center
+            @open="handleOpen"
             width="80%">
                 <el-form label-width="100px" :model="publishForm" class="publish_warp" ref="publishForm" :rules="publishRule">
                     <el-form-item label="用户昵称:" prop="uname">
@@ -22,16 +23,16 @@
                             <area-select type="text" v-model="publishForm.district" :data="$pcaa" :level="3"></area-select>
                         </template>
                     </el-form-item>
-                    <el-form-item label="客户端:" prop="client">
-                        <el-radio-group v-model="publishForm.client">
+                    <el-form-item label="客户端:" prop="role">
+                        <el-radio-group v-model="publishForm.role">
                             <el-radio label="居民端"></el-radio>
                             <el-radio label="医生端"></el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="分配权限:">
-                        <el-checkbox v-model="allElection">全选</el-checkbox>
+                        <el-checkbox v-model="allElection" @change="allElectionFun">全选</el-checkbox>
                         <el-tree
-                        :data="publishForm.power"
+                        :data="power"
                         show-checkbox
                         default-expand-all
                         getCheckedKeys
@@ -57,6 +58,8 @@
 </template>
 
 <script>
+import bus from '../../assets/eventBus'
+import {powerAndDistrict} from '../../service/index'
 export default {
     name:'publish',
     props: ['parameter'],
@@ -68,40 +71,14 @@ export default {
             action: '', //文章提交的地址
             resourceCheckedKey: [],
             signCode: [9999],
-            aaa:[1, 11, 111, 112, 113, 12, 121, 122, 123, 21, 211, 212, 213, 222, 223, 9999, 2, 22],
             publishForm: {
                 uname: '',
                 username: '',
                 pwd: '',
                 district: [],
-                client:'居民端',
-                power: [{
-                    id: 1,
-                    label: '文章',
-                    children: [{id: 111,label: '发布文章'}, {id: 112,label: '审核文章'}, {id: 113,label: '文章分类'}]
-                    }, {
-                    id: 2,
-                    label: '视频',
-                    children: [{id: 211,label: '发布文章'}, {id: 212,label: '审核文章'}, {id: 213,label: '文章分类'}]
-                    }, {
-                    id: 3,
-                    label: '公告',
-                    children: [{id: 311,label: '发布公告'}, {id: 10,label: '审核公告'}]
-                    },
-                    {
-                    id: 4,
-                    label: '广告',
-                    children: [{id: 411,label: '广告图片'}]
-                    },
-                    {
-                    id: 5,
-                    label: '公共卫生',
-                    children: [
-                        {id: 511,label: '服务包'}, {id: 512,label: '服务协议'}
-                    ]
-                   }
-                ]
+                role:'居民端'
             },
+            power: [],
             defaultProps: {
                 children: 'children',
                 label: 'label'
@@ -124,17 +101,19 @@ export default {
     },
     methods:{
         DetermineBtn() {
-            // console.log(this.$refs.tree.getCheckedKeys())
-            // console.log(this.$refs.tree.getHalfCheckedKeys())
-            console.log(this.publishForm)
             let tree = this.$refs.tree;
-            tree.getCheckedKeys().concat(this.signCode,tree.getHalfCheckedKeys())
-            console.log(tree.getCheckedKeys().concat(this.signCode,tree.getHalfCheckedKeys()))
+            this.publishForm.powers = tree.getCheckedKeys().concat(tree.getHalfCheckedKeys()).join(',');
+            // this.publishForm.district = this.publishForm.district.join(',')
             let vm = this;
+            var data = JSON.parse(JSON.stringify(this.publishForm))   //深拷贝对象
+            data.district = data.district.join(',');
             this.$refs['publishForm'].validate((valid) => {
                 if (valid) {
-                    this.parameter.fun(this.publishForm).then(res => {
-                        console.log(res)
+                    this.parameter.fun(data).then(res => {
+                        if(res.data.code == 200){
+                            this.$message.success(res.data.message);
+                            this.$parent.FindAll();
+                        }
                     })
                     this.publishDialogVisible = false //关闭弹框
                 } else {
@@ -146,34 +125,46 @@ export default {
                 }
             });
         },
-        CheckedKeys(leafOnly){
-            console.log(leafOnly)
-        }
-    },
-    watch:{
-        allElection(){   //全选
+        handleOpen(){
+            this.publishForm.district = [];
+            let powerData = this.$store.getters.getPower;
+            powerData.splice(3,1)  // 隐藏广告
+            if(this.$store.state.level > 1){   //判断用户等级，根据等级去隐藏用户管理
+                for(var i = 0;i<powerData.length;i++){
+                    if(powerData[i].id == 6){
+                        powerData.splice(i,1)
+                    }
+                }
+            }
+            this.power = powerData;
+            if(this.parameter.data){
+                this.publishForm.id = this.parameter.data.user.id;
+                this.publishForm.uname = this.parameter.data.user.uname;
+                this.publishForm.username = this.parameter.data.user.username;
+                this.publishForm.pwd = this.parameter.data.user.pwd;
+                this.publishForm.role = this.parameter.data.user.role;
+                this.publishForm.district.push(this.parameter.data.user.province)
+                this.publishForm.district.push(this.parameter.data.user.city)
+                this.publishForm.district.push(this.parameter.data.user.county)
+                this.publishForm.district.push(this.parameter.data.user.town)
+                this.$nextTick(() => {
+                    this.$refs.tree.setCheckedKeys(this.parameter.data.powers.split(','));
+                });
+            }else{
+                
+            }
+        },
+        allElectionFun(){   //全选
             if(this.allElection){
                 let All = [];
-                for(let i in this.publishForm.power){
-                    All.push(this.publishForm.power[i].id)
+                for(let i in this.power){
+                    All.push(this.power[i].id)
                 };
                 this.$refs.tree.setCheckedKeys(All);
             }else{
                 this.$refs.tree.setCheckedKeys([]);
             }
-        },
-        parameter(){
-            if(this.parameter.data){
-                this.publishForm = this.parameter.data
-            }
         }
-    },
-    beforeMount(){
-        let getIdList = this.aaa;
-        let filterId = getIdList.indexOf(this.signCode[0]);  // 获取 标识数组元素 当前索引
-        getIdList.splice(filterId, getIdList.length - filterId); // 利用 splice 方法 从当前索引处开始切割，切割个数为  getIdList.length - filterId
-        console.log(getIdList)
-        this.$refs.tree.setCheckedKeys(getIdList)// 根据 getIdList 数组的值进行选中
     }
 }
 </script>

@@ -188,11 +188,13 @@ export default {
         height: px2rem(900);
         padding: px2rem(22) px2rem(22) 0 px2rem(22);
         float: left;
+        overflow-y: auto;
         .tabel_warp{
             padding: px2rem(22) 0 0 px2rem(30);
             height: 100%;
             background: #ffffff;
             margin-top: px2rem(22);
+            margin-bottom: px2rem(100);
             .search_warp{
                 margin-bottom: px2rem(22);
             }

@@ -12,7 +12,7 @@
         <div class="ification searchContent" v-if="searchData.sort">
             <span>分类:</span>&nbsp;
             <el-select v-model="searchContent.sort" placeholder="请选择" @change="resetFun">
-                <el-option v-for="(list,index) in sort" :key="index" :label="list.sortname" :value="list.sortname"></el-option>
+                <el-option v-for="(list,index) in sort" :key="index" :label="list.sortName" :value="list.sortName"></el-option>
             </el-select>
         </div>
         <div class="status searchContent" v-if="searchData.status">
@@ -80,6 +80,7 @@ export default {
     beforeMount(){
         if(this.searchData.sort){
             this.searchData.sort.countName().then(res => {
+                console.log(res)
                 this.sort = res.data.data
             })
         }

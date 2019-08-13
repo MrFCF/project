@@ -116,6 +116,17 @@ export default {
     }
 }
 </script>
+<style lang="scss">
+    .publishArticle{
+        overflow-y: auto;
+        .tabel_warp{
+            padding-bottom: px2rem(100);
+        }
+    }
+    .publishArticle::-webkit-scrollbar { width: 0 !important }
+    .publishArticle { -ms-overflow-style: none; }
+    .publishArticle { overflow: -moz-scrollbars-none; }
+</style>
 
 <style lang='scss' scoped>
     .publishArticle{

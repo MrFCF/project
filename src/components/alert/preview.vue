@@ -9,7 +9,7 @@
             <div class="preview_warp">
                 <div class="content">
                     <h3 class="preview_title">{{publishForm.title}}</h3>
-                    <div v-html="publishForm.content">
+                    <div v-html="publishForm.content" class="contentText">
                         
                     </div>
                 </div>
@@ -65,11 +65,16 @@ export default {
                             padding-bottom: px2rem(30);
                             font-size: px2rem(30);
                         }
+                        .contentText{
+                            letter-spacing: 1px;
+                            line-height: 25px;
+                        }
                         img{
                             max-width: 100%;
                         }
                         p{
                             margin-bottom: 20px;
+                            text-indent: 20px;
                         }
                     }
                     .content::-webkit-scrollbar { width: 0 !important }

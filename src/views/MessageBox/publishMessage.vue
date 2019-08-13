@@ -22,6 +22,7 @@
                                 :on-change="handleChange"
                                 :auto-upload="false"
                                 :data="publishForm"
+                                :on-success="publishSuc"
                                 name="photo">  <!-- :data 提交的数据 action 提交的地址-->
                             <img v-if="publishForm.photo" :src="publishForm.photo" class="avatar">
                             
@@ -110,6 +111,7 @@ export default {
             this.$refs['publishForm'].validate((valid) => {
                 if (valid) {
                     this.$refs.upload.submit();
+                    this.$parent.FindAll();
                     this.publishDialogVisible = false //关闭弹框
                 } else {
                     this.$message({
@@ -164,6 +166,13 @@ export default {
                 this.sort = this.parameter.sort
             }
             
+        },
+        publishSuc(res){
+            if(res.data.code == 200){
+                this.$message.success(res.data.message);
+            }else{
+                this.$message.error('发布失败!');
+            }
         }
     }
 }

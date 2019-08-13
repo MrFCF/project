@@ -17,6 +17,7 @@
     height: 100%;
     // overflow-y: hidden;
     background: #F0F1F5;
+    overflow-y: hidden;
     // width: 1920px;
     // overflow: auto;
   }
